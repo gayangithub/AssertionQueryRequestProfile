@@ -21,7 +21,7 @@ package org.wso2.carbon.identity.saml.profile.query.processor;
 import org.opensaml.SAMLAssertion;
 import org.opensaml.saml2.core.AttributeQuery;
 import org.opensaml.saml2.core.RequestAbstractType;
-import org.opensaml.saml2.core.SubjectQuery;
+
 
 import java.util.Map;
 import java.util.Set;
@@ -29,7 +29,7 @@ import java.util.Set;
 /**
  * Created by Gayan on 6/12/2016.
  */
-public class SAMLAttributeQueryProcessor extends  SAMLSubjectQueryProcessor {
+public class SAMLAttributeQueryProcessor extends SAMLSubjectQueryProcessor {
 
     @Override
     public SAMLAssertion[] process(RequestAbstractType request) {
@@ -46,13 +46,10 @@ public class SAMLAttributeQueryProcessor extends  SAMLSubjectQueryProcessor {
 
         Map<String, String> attributes = getUserAttributes(userName, null);
 
-        build(userName, issuerConfig , attributes);
+        build(userName, issuerConfig, attributes);
 
         return new SAMLAssertion[0];
     }
 
-    public Set <String> filterRequestedAttributes(){
-
-        
-    }
+    
 }
