@@ -51,5 +51,5 @@ public class SAMLAttributeQueryProcessor extends SAMLSubjectQueryProcessor {
         return new SAMLAssertion[0];
     }
 
-    
+
 }
