@@ -1,0 +1,4 @@
+org\wso2\carbon\identity\saml\profile\query\SAMLQueryService.class
+org\wso2\carbon\identity\saml\profile\query\QueryMessageReciever.class
+org\wso2\carbon\identity\saml\profile\query\internal\SAMLQueryServiceComponent.class
+org\wso2\carbon\identity\saml\profile\query\RequestDTO.class
