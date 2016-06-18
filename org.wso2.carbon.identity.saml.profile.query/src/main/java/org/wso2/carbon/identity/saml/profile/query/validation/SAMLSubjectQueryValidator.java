@@ -18,20 +18,40 @@
 
 package org.wso2.carbon.identity.saml.profile.query.validation;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.opensaml.SAMLSubject;
+import org.opensaml.SAMLSubjectQuery;
 import org.opensaml.saml2.core.RequestAbstractType;
+
 
 /**
  *
  */
 public class SAMLSubjectQueryValidator extends AbstractSAMLQueryValidator {
 
+    private final static Log log = LogFactory.getLog(SAMLSubjectQueryValidator.class);
+   SAMLSubject subject = null;
+
     @Override
     public boolean validate(RequestAbstractType request) {
-        return super.validate(request);
+        boolean isSubjectValid = this.validateSubject((SAMLSubjectQuery) request);
+
+        return super.validate(request) && isSubjectValid;
     }
 
-    protected boolean validateSubject() {
+    protected boolean validateSubject(SAMLSubjectQuery request) {
+        subject = request.getSubject();
+        boolean isValidsubject = false;
+        // Validating SubjectID format
+        if (subject != null && subject.getNameIdentifier() != null &&
+                subject.getNameIdentifier().getFormat() != null && super.getSsoIdpConfig().getNameIDFormat() != null &&
+                subject.getNameIdentifier().getFormat().equals(super.getSsoIdpConfig().getNameIDFormat())) {
+            log.info("Request subject is valid");
+            isValidsubject = true;
+        }
 
-        return false;
+
+        return isValidsubject;
     }
 }

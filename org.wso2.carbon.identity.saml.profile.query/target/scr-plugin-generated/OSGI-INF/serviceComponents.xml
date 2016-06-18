@@ -2,5 +2,6 @@
     <scr:component enabled="true" immediate="true" name="identity.saml.query">
         <implementation class="org.wso2.carbon.identity.saml.profile.query.internal.SAMLQueryServiceComponent"/>
         <property name="service.pid" value="identity.saml.query"/>
+        <reference name="user.realmservice.default" interface="org.wso2.carbon.user.core.service.RealmService" cardinality="1..1" policy="dynamic" bind="setRealmService" unbind="unsetRealmService"/>
     </scr:component>
 </components>

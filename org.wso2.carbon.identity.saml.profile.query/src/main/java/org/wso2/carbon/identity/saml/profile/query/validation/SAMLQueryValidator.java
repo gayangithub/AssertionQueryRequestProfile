@@ -28,10 +28,11 @@ public interface SAMLQueryValidator {
 
 
     /**
-     *
      * @param request
      * @return
      */
     public boolean validate(RequestAbstractType request);
+
+
 
 }

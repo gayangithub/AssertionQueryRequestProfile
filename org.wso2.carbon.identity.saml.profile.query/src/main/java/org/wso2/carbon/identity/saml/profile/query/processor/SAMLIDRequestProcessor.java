@@ -38,9 +38,9 @@ public class SAMLIDRequestProcessor implements SAMLQueryProcessor {
 
         List<SAMLAssertionFinder> finders = getFinders();
 
-        for(SAMLAssertionFinder finder : finders) {
+        for (SAMLAssertionFinder finder : finders) {
             SAMLAssertion[] assertions = finder.find(id);
-            if(assertions != null && assertions.length > 0) {
+            if (assertions != null && assertions.length > 0) {
                 return assertions;
             }
         }

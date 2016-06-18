@@ -31,48 +31,47 @@ import org.wso2.carbon.user.core.service.RealmService;
 
 public class SAMLQueryServiceComponent {
 
-	private static Log log = LogFactory.getLog(SAMLQueryServiceComponent.class);
+    private static Log log = LogFactory.getLog(SAMLQueryServiceComponent.class);
 
-	private static RealmService realmservice = null;
+    private static RealmService realmservice = null;
 
-	protected void activate(ComponentContext ctxt) {
+    protected void activate(ComponentContext ctxt) {
 
-		System.out.println("Component is activated");
-		log.info("SAMLQueryService Message: Bundle activated********************************");
+        System.out.println("Component is activated");
+        log.info("SAMLQueryServiceComponent  : Bundle activated********************************");
 
-	}
+    }
 
-	protected void deactivate(ComponentContext ctxt) {
+    protected void deactivate(ComponentContext ctxt) {
 
     }
 
 
+    /**
+     * sets realm service
+     *
+     * @param realmService <code>RealmService</code>
+     */
+    protected void setRealmService(RealmService realmService) {
+        if (log.isDebugEnabled()) {
+            log.debug("DefaultUserRealm set in to bundle");
+        }
+        this.realmservice = realmService;
+    }
 
-	/**
-	 * sets realm service
-	 *
-	 * @param realmService <code>RealmService</code>
-	 */
-	protected void setRealmService(RealmService realmService) {
-		if (log.isDebugEnabled()) {
-			log.debug("DefaultUserRealm set in to bundle");
-		}
-		this.realmservice = realmService;
-	}
+    /**
+     * un-sets realm service
+     *
+     * @param realmService <code>RealmService</code>
+     */
+    protected void unsetRealmService(RealmService realmService) {
+        if (log.isDebugEnabled()) {
+            log.debug("DefaultUserRealm unset in to bundle");
+        }
+        this.realmservice = null;
+    }
 
-	/**
-	 * un-sets realm service
-	 *
-	 * @param realmService <code>RealmService</code>
-	 */
-	protected void unsetRealmService(RealmService realmService) {
-		if (log.isDebugEnabled()) {
-			log.debug("DefaultUserRealm unset in to bundle");
-		}
-		this.realmservice = null;
-	}
-
-	public static RealmService getRealmservice() {
-		return realmservice;
-	}
+    public static RealmService getRealmservice() {
+        return realmservice;
+    }
 }

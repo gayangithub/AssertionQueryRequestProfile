@@ -28,8 +28,8 @@ public interface SAMLAttributeFinder {
 
     public void init();
 
-    public Map<String,String> getAttributes(String userName);
+    public Map<String, String> getAttributes(String userName);
 
-    public Map<String,String> getAttributes(String userName, Set<String> attributes);
+    public Map<String, String> getAttributes(String userName, Set<String> attributes);
 
 }

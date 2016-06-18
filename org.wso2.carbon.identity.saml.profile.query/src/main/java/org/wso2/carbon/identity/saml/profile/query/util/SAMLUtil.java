@@ -20,6 +20,7 @@ package org.wso2.carbon.identity.saml.profile.query.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.xerces.util.SecurityManager;
 import org.opensaml.Configuration;
 import org.opensaml.DefaultBootstrap;
 import org.opensaml.xml.ConfigurationException;
@@ -32,13 +33,18 @@ import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.identity.base.IdentityException;
 import org.wso2.carbon.identity.core.model.SAMLSSOServiceProviderDO;
 import org.wso2.carbon.identity.core.persistence.IdentityPersistenceManager;
+import org.wso2.carbon.identity.sso.saml.SSOServiceProviderConfigManager;
+import org.wso2.carbon.identity.sso.saml.util.CarbonEntityResolver;
+import org.wso2.carbon.identity.sso.saml.util.SAMLSSOUtil;
 import org.wso2.carbon.registry.core.session.UserRegistry;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Created by Gayan on 6/12/2016.
@@ -64,8 +70,7 @@ public class SAMLUtil {
             // securityManager);
 
             DocumentBuilder docBuilder = documentBuilderFactory.newDocumentBuilder();
-            Document document = docBuilder
-                    .parse(new ByteArrayInputStream(xmlString.trim().getBytes(Charset.forName("UTF-8"))));
+            Document document = docBuilder.parse(new ByteArrayInputStream(xmlString.trim().getBytes(Charset.forName("UTF-8"))));
             Element element = document.getDocumentElement();
             UnmarshallerFactory unmarshallerFactory = Configuration.getUnmarshallerFactory();
             Unmarshaller unmarshaller = unmarshallerFactory.getUnmarshaller(element);
@@ -89,6 +94,36 @@ public class SAMLUtil {
             } catch (ConfigurationException e) {
                 log.error("Error in bootstrapping the OpenSAML2 library", e);
             }
+        }
+    }
+
+    /**
+     * Load Service Provider Configurations
+     *
+     * @param issuer
+     * @return SAMLSSOServiceProviderDO
+     * @throws IdentityException
+     */
+    public static SAMLSSOServiceProviderDO getServiceProviderConfig(String issuer)
+            throws IdentityException {
+        try {
+            SSOServiceProviderConfigManager idPConfigManager =
+                    SSOServiceProviderConfigManager.getInstance();
+            SAMLSSOServiceProviderDO ssoIdpConfigs = idPConfigManager.getServiceProvider(issuer);
+            if (ssoIdpConfigs == null) {
+                IdentityPersistenceManager persistenceManager =
+                        IdentityPersistenceManager.getPersistanceManager();
+                int tenantId = CarbonContext.getThreadLocalCarbonContext().getTenantId();
+                UserRegistry registry =
+                        SAMLSSOUtil.getRegistryService()
+                                .getConfigSystemRegistry(tenantId);
+                ssoIdpConfigs = persistenceManager.getServiceProvider(registry, issuer);
+            }
+            return ssoIdpConfigs;
+        } catch (Exception e) {
+            throw IdentityException.error(
+                    SAMLValidatorConstants.ValidationMessage.ERROR_LOADING_SP_CONF,
+                    e);
         }
     }
 

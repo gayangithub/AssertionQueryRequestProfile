@@ -23,7 +23,7 @@ import org.opensaml.saml2.core.RequestAbstractType;
 /**
  * Created by Gayan on 6/12/2016.
  */
-public class SAMLAuthzDecisionValidator extends AbstractSAMLQueryValidator {
+public class SAMLAuthzDecisionValidator extends SAMLSubjectQueryValidator {
     @Override
     public boolean validate(RequestAbstractType request) {
         return super.validate(request);

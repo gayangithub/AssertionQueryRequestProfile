@@ -34,25 +34,29 @@ public class SAMLValidatorFactory {
 
         SAMLQueryValidator samlQueryValidator = null;
 
-        if(request instanceof AssertionIDRequest){
+        if (request instanceof AssertionIDRequest) {
 
             samlQueryValidator = new SAMLIDRequestValidator();
 
-        } else if(request instanceof SAMLSubjectQuery) {
+         } else if (request instanceof SAMLSubjectQuery) {
 
             samlQueryValidator = new SAMLSubjectQueryValidator();
+
 
         } else if (request instanceof SAMLAttributeQuery) {
 
             samlQueryValidator = new SAMLAttributeQueryValidator();
 
-        } else if(request instanceof SAMLAuthenticationQuery) {
+
+        } else if (request instanceof SAMLAuthenticationQuery) {
 
             samlQueryValidator = new SAMLAuthQueryValidator();
+            ;
 
-        } else if(request instanceof SAMLAuthorizationDecisionQuery) {
+        } else if (request instanceof SAMLAuthorizationDecisionQuery) {
 
             samlQueryValidator = new SAMLAuthzDecisionValidator();
+
         }
 
         return samlQueryValidator;

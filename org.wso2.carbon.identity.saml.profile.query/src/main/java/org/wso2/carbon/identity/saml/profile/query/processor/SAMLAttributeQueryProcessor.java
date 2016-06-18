@@ -19,10 +19,13 @@
 package org.wso2.carbon.identity.saml.profile.query.processor;
 
 import org.opensaml.SAMLAssertion;
+import org.opensaml.saml2.core.Attribute;
 import org.opensaml.saml2.core.AttributeQuery;
 import org.opensaml.saml2.core.RequestAbstractType;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,9 +43,9 @@ public class SAMLAttributeQueryProcessor extends SAMLSubjectQueryProcessor {
 
         String userName = getUserName(query.getSubject());
 
-        query.getAttributes();
-
         Object issuerConfig = getIssuerConfig(issuer);
+
+        List<Attribute> requestedattributes = query.getAttributes();
 
         Map<String, String> attributes = getUserAttributes(userName, null);
 

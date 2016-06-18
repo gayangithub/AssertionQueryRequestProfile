@@ -19,36 +19,43 @@
 package org.wso2.carbon.identity.saml.profile.query;
 
 public class RequestDTO {
-	
-	private String id;
-	private int clientId;
-	private String [] value;
-	private boolean isTrue;
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
-	public int getClientId() {
-		return clientId;
-	}
-	public void setClientId(int clientId) {
-		this.clientId = clientId;
-	}
-	public String[] getValue() {
-		return value;
-	}
-	public void setValue(String[] value) {
-		this.value = value;
-	}
-	public boolean isTrue() {
-		return isTrue;
-	}
-	public void setTrue(boolean isTrue) {
-		this.isTrue = isTrue;
-	}
-	
-	
+
+    private String id;
+    private int clientId;
+    private String[] value;
+    private boolean isTrue;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public int getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(int clientId) {
+        this.clientId = clientId;
+    }
+
+    public String[] getValue() {
+        return value;
+    }
+
+    public void setValue(String[] value) {
+        this.value = value;
+    }
+
+    public boolean isTrue() {
+        return isTrue;
+    }
+
+    public void setTrue(boolean isTrue) {
+        this.isTrue = isTrue;
+    }
+
 
 }

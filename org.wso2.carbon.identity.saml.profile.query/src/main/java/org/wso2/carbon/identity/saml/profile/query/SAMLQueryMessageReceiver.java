@@ -24,38 +24,50 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.receivers.AbstractInOutMessageReceiver;
 
-import org.opensaml.*;
-import org.opensaml.saml2.binding.security.SAML2AuthnRequestsSignedRule;
-import org.opensaml.saml2.core.AssertionIDRequest;
 import org.opensaml.saml2.core.RequestAbstractType;
 
-import org.wso2.carbon.identity.saml.profile.query.internal.SAMLQueryServiceComponent;
+import org.wso2.carbon.identity.base.IdentityException;
 import org.wso2.carbon.identity.saml.profile.query.util.SAMLUtil;
 import org.wso2.carbon.identity.saml.profile.query.validation.SAMLQueryValidator;
 import org.wso2.carbon.identity.saml.profile.query.validation.SAMLValidatorFactory;
-import org.wso2.carbon.user.api.Claim;
-import org.wso2.carbon.user.api.UserStoreException;
 
 /**
  * Axis2 Message receiver for SAML Query
  */
 public class SAMLQueryMessageReceiver extends AbstractInOutMessageReceiver {
+    OMElement queryOM = null;
 
 
-	@Override
-	public void invokeBusinessLogic(MessageContext inMessageContext, MessageContext outMessageContext) throws AxisFault {
+    @Override
+    public void invokeBusinessLogic(MessageContext inMessageContext, MessageContext outMessageContext) throws AxisFault {
 
-		if(inMessageContext.getEnvelope().getBody() != null) {
+        if (inMessageContext.getEnvelope().getBody() != null) {
+            queryOM = inMessageContext.getEnvelope().getBody().getFirstElement();
 
-		}
+            System.out.println("SAMLQueryMessageReceiver Executed!!!!!!  " + queryOM.toString());
+            RequestAbstractType request = ((RequestAbstractType) SAMLUtil.unmarshall(queryOM.toString()));
+            if (request == null) {
+                log.error("No way to proceed .request is empty");
+                return;
+            } else {
 
-		if(inMessageContext.getEnvelope().getBody().getFirstElement() != null) {
+                SAMLQueryValidator validator = SAMLValidatorFactory.getValidator(request);
+                boolean isValidMessage = validator.validate(request);
+                if (isValidMessage)
+                    log.info("request message is validated completely");
 
-		}
+                else
+                    log.info("Request message contain validation issues!");
+            }
+        } else {
 
-		OMElement queryOM = inMessageContext.getEnvelope().getBody().getFirstElement();
+            log.info("SOAP message body is empty");
+        }
 
-		System.out.println("SAMLQueryMessageReceiver Executed!!!!!!  " + queryOM.toString());
+        if (inMessageContext.getEnvelope().getBody().getFirstElement() != null) {
+
+        }
+
 
 //		try {
 //			Claim[] claims = SAMLQueryServiceComponent.getRealmservice().getTenantUserRealm(-1234).
@@ -65,18 +77,6 @@ public class SAMLQueryMessageReceiver extends AbstractInOutMessageReceiver {
 //		}
 //
 //		System.out.println("User claims =======================");
-
-		RequestAbstractType request =  ((RequestAbstractType) SAMLUtil.unmarshall(queryOM.toString()));
-
-
-		// validate message
-
-		SAMLQueryValidator validator = SAMLValidatorFactory.getValidator(request);
-
-		boolean isValid = validator.validate(request);
-
-
-
 
 
 //		request.getIssuer();
@@ -88,9 +88,7 @@ public class SAMLQueryMessageReceiver extends AbstractInOutMessageReceiver {
 //			request.get
 //		}
 
-	}
-
-
+    }
 
 
 }

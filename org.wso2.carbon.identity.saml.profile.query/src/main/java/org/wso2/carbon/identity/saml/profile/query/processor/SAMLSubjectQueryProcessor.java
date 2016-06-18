@@ -47,24 +47,24 @@ public class SAMLSubjectQueryProcessor implements SAMLQueryProcessor {
 
         Map<String, String> attributes = getUserAttributes(userName, null);
 
-        build(userName, issuerConfig , attributes);
+        build(userName, issuerConfig, attributes);
 
         return new SAMLAssertion[0];
     }
 
-    protected  Object getIssuerConfig(String issuer) {
+    protected Object getIssuerConfig(String issuer) {
 
         return new Object();
     }
 
 
-    protected Map<String,String> getUserAttributes(String userName, Set<String> attributes){
+    protected Map<String, String> getUserAttributes(String userName, Set<String> attributes) {
 
         List<SAMLAttributeFinder> finders = getAttributeFinders();
 
-        for(SAMLAttributeFinder finder : finders) {
-            Map<String,String> attributeMap = finder.getAttributes(userName, attributes);
-            if(attributeMap != null && attributeMap.size() > 0) {
+        for (SAMLAttributeFinder finder : finders) {
+            Map<String, String> attributeMap = finder.getAttributes(userName, attributes);
+            if (attributeMap != null && attributeMap.size() > 0) {
                 return attributeMap;
             }
         }

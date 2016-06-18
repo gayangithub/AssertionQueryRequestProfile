@@ -21,7 +21,7 @@ package org.wso2.carbon.identity.saml.profile.query.processor;
 /**
  * Created by Gayan on 6/12/2016.
  */
-public class SAMLAuthzDecisionProcessor extends  SAMLSubjectQueryProcessor {
+public class SAMLAuthzDecisionProcessor extends SAMLSubjectQueryProcessor {
 
 
 }

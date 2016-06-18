@@ -26,5 +26,5 @@ import org.opensaml.saml2.core.RequestAbstractType;
  */
 public interface SAMLQueryProcessor {
 
-    public SAMLAssertion[]  process(RequestAbstractType request);
+    public SAMLAssertion[] process(RequestAbstractType request);
 }

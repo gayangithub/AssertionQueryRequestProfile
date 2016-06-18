@@ -19,8 +19,8 @@
 
 <serviceGroup>
 
-    
-        <service name="SAMLQueryService" scope="transportsession">
+
+    <service name="SAMLQueryService" scope="transportsession">
         <transports>
             <transport>https</transport>
         </transports>
@@ -28,17 +28,16 @@
             <messageReceiver mep="http://www.w3.org/2006/01/wsdl/in-out"
                              class="org.wso2.carbon.identity.saml.profile.query.SAMLQueryMessageReceiver"/>
         </messageReceivers>
-        
+
         <schema schemaNamespace="http://org.apache.axis2/xsd" elementFormDefaultQualified="true"/>
         <description>
             To administer Identity Provider related functionality.
         </description>
-        
+
         <operation name="TestToken" mep="http://www.w3.org/2006/01/wsdl/in-out">
             <actionMapping>http://schemas.xmlsoap.org/ws/2005/02/trust/RST/Test</actionMapping>
         </operation>
     </service>
-
 
 
     <parameter name="hiddenService" locked="true">false</parameter>

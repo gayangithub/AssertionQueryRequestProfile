@@ -39,6 +39,11 @@
             <artifactId>org.wso2.carbon.identity.core</artifactId>
             <version>5.0.7</version>
         </dependency>
+          <dependency>
+              <groupId>org.wso2.carbon.identity</groupId>
+              <artifactId>org.wso2.carbon.identity.sso.saml</artifactId>
+              <version>5.0.7</version>
+          </dependency>
                 <dependency>
             <groupId>opensaml.wso2</groupId>
             <artifactId>opensaml2</artifactId>
@@ -82,7 +87,7 @@
                             org.wso2.carbon.identity.saml.profile.query.internal,
                         </Private-Package>
                         <Export-Package>
-                            !org.wso2.carbon.identity.saml.profile.query.internal,
+                            org.wso2.carbon.identity.saml.profile.query.*,
                             org.wso2.carbon.identity.saml.profile.query;
                             version="1.0.0"
                         </Export-Package>
