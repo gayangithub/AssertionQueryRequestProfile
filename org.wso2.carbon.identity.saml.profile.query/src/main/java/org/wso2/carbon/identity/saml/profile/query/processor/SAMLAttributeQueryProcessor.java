@@ -18,40 +18,40 @@
 
 package org.wso2.carbon.identity.saml.profile.query.processor;
 
-import org.opensaml.SAMLAssertion;
-import org.opensaml.saml2.core.Attribute;
+import org.opensaml.saml2.core.Assertion;
 import org.opensaml.saml2.core.AttributeQuery;
 import org.opensaml.saml2.core.RequestAbstractType;
+import org.opensaml.saml2.core.Response;
+import org.wso2.carbon.identity.base.IdentityException;
+import org.wso2.carbon.identity.core.model.SAMLSSOServiceProviderDO;
+import org.wso2.carbon.identity.saml.profile.query.ResponseBuilder;
 
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-/**
- * Created by Gayan on 6/12/2016.
- */
+
 public class SAMLAttributeQueryProcessor extends SAMLSubjectQueryProcessor {
 
     @Override
-    public SAMLAssertion[] process(RequestAbstractType request) {
-
+    public Response process(RequestAbstractType request) {
         AttributeQuery query = (AttributeQuery) request;
-
         String issuer = getIssuer(query.getIssuer());
-
         String userName = getUserName(query.getSubject());
-
         Object issuerConfig = getIssuerConfig(issuer);
+        //List<Attribute> requestedattributes = query.getAttributes();
+        //pass filtered attribute list below
+        Map<String, String> attributes = getUserAttributes(userName, null, issuerConfig);
+        Assertion assertion = build(userName, issuerConfig, attributes);
+        Assertion[] assertions = {assertion};
+        Response response = null;
 
-        List<Attribute> requestedattributes = query.getAttributes();
+        try {
+            response = ResponseBuilder.build(assertions, (SAMLSSOServiceProviderDO) issuerConfig, userName);
+            log.info("SAMLAttributeQueryProcessor : response generated");
+        } catch (IdentityException e) {
+            e.printStackTrace();
+        }
 
-        Map<String, String> attributes = getUserAttributes(userName, null);
-
-        build(userName, issuerConfig, attributes);
-
-        return new SAMLAssertion[0];
+        return response;
     }
 
 

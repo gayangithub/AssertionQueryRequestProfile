@@ -18,12 +18,12 @@ package org.wso2.carbon.identity.saml.profile.query.util;
 
 public class SAMLValidatorConstants {
 
-    public class Attribute {
+    public static class Attribute {
         public static final String ISSUER_FORMAT =
                 "urn:oasis:names:tc:SAML:2.0:nameid-format:entity";
     }
 
-    public class ValidationType {
+    public static class ValidationType {
         public static final String VAL_DECODE = "Decoding the Request";
         public static final String VAL_UNMARSHAL = "Unmarshalling the Request";
         public static final String VAL_VERSION = "Validating the Version";
@@ -39,7 +39,7 @@ public class SAMLValidatorConstants {
         public static final String VAL_WRONG_BINDING = "Invalid Binding for AuthnRequest";
     }
 
-    public class ValidationMessage {
+    public static class ValidationMessage {
         public static final String VAL_DECODE_SUCCESS = "Request decoded succesfully.";
         public static final String VAL_DECODE_FAIL = " Unable to decode the request.";
         public static final String VAL_UNMARSHAL_SUCCESS = "Request unmarshalled succesfully.";
@@ -69,7 +69,7 @@ public class SAMLValidatorConstants {
         public static final String VAL_WRONG_BINDING_MSG = "Request can unmarshall using 'Redirect Binding', please check Binding in Service Provider side.";
     }
 
-    public class ErrorMessage {
+    public static class ErrorMessage {
         public static final String ERROR_INCOMPLETE_DATA = "Provided data(Issuer/User Name) is incomplete.";
         public static final String ERROR_CONFIG_NOT_AVAIL = "A Service Provider with the Issuer '%s' is not registered.";
         public static final String ERROR_BUILD_FAIL = "Response generation failed with error : '%s'.";

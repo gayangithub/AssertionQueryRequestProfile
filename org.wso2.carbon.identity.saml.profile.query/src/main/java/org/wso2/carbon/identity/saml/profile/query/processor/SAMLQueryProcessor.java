@@ -18,13 +18,14 @@
 
 package org.wso2.carbon.identity.saml.profile.query.processor;
 
-import org.opensaml.SAMLAssertion;
 import org.opensaml.saml2.core.RequestAbstractType;
+import org.opensaml.saml2.core.Response;
 
-/**
- * Created by Gayan on 6/12/2016.
- */
+
 public interface SAMLQueryProcessor {
-
-    public SAMLAssertion[] process(RequestAbstractType request);
+    /**
+     * @param request
+     * @return Response container of one or more assertions
+     */
+    public Response process(RequestAbstractType request);
 }

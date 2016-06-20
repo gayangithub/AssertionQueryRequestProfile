@@ -20,22 +20,29 @@ package org.wso2.carbon.identity.saml.profile.query;
 
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.util.AXIOMUtil;
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.receivers.AbstractInOutMessageReceiver;
-
+import org.apache.axis2.transport.TransportUtils;
 import org.opensaml.saml2.core.RequestAbstractType;
-
+import org.opensaml.saml2.core.Response;
 import org.wso2.carbon.identity.base.IdentityException;
-import org.wso2.carbon.identity.saml.profile.query.util.SAMLUtil;
+import org.wso2.carbon.identity.saml.profile.query.processor.SAMLProcessorFactory;
+import org.wso2.carbon.identity.saml.profile.query.processor.SAMLQueryProcessor;
+import org.wso2.carbon.identity.saml.profile.query.util.SAMLQueryRequestUtil;
 import org.wso2.carbon.identity.saml.profile.query.validation.SAMLQueryValidator;
 import org.wso2.carbon.identity.saml.profile.query.validation.SAMLValidatorFactory;
+
+import javax.xml.stream.XMLStreamException;
 
 /**
  * Axis2 Message receiver for SAML Query
  */
 public class SAMLQueryMessageReceiver extends AbstractInOutMessageReceiver {
     OMElement queryOM = null;
+    boolean isValidMessage = false;
 
 
     @Override
@@ -44,28 +51,57 @@ public class SAMLQueryMessageReceiver extends AbstractInOutMessageReceiver {
         if (inMessageContext.getEnvelope().getBody() != null) {
             queryOM = inMessageContext.getEnvelope().getBody().getFirstElement();
 
-            System.out.println("SAMLQueryMessageReceiver Executed!!!!!!  " + queryOM.toString());
-            RequestAbstractType request = ((RequestAbstractType) SAMLUtil.unmarshall(queryOM.toString()));
+            System.out.println("SAMLQueryMessageReceiver Executed!!!!!!  ");
+            System.out.println(queryOM.toString());
+            RequestAbstractType request = ((RequestAbstractType) SAMLQueryRequestUtil.unmarshall(queryOM.toString()));
             if (request == null) {
                 log.error("No way to proceed .request is empty");
                 return;
             } else {
 
                 SAMLQueryValidator validator = SAMLValidatorFactory.getValidator(request);
-                boolean isValidMessage = validator.validate(request);
-                if (isValidMessage)
+                isValidMessage = validator.validate(request);
+                if (isValidMessage) {
                     log.info("request message is validated completely");
 
-                else
+                    //Process Request message
+                    SAMLQueryProcessor processor = SAMLProcessorFactory.getProcessor(request);
+                    Response response = processor.process(request);
+                    try {
+                        String nonEncodedResponse = SAMLQueryRequestUtil.marshall((response));
+
+
+                        /////////////
+//                        SOAPEnvelope env1 = SAMLQueryRequestUtil.createSOAPEnvelope(inMessageContext.getEnvelope().
+//                                getNamespace().getNamespaceURI());
+                        OMElement myOMElement = null;
+                        try {
+                            myOMElement = AXIOMUtil.stringToOM(nonEncodedResponse);
+                        } catch (XMLStreamException e) {
+                            e.printStackTrace();
+                        }
+                        SOAPEnvelope soapEnvelope = TransportUtils.createSOAPEnvelope(myOMElement);
+
+
+                        outMessageContext.setEnvelope(soapEnvelope);
+
+
+                        ///////////
+
+                        log.info("Response created....... :   " + nonEncodedResponse);
+
+                    } catch (IdentityException e) {
+                        e.printStackTrace();
+                    }
+
+
+                } else {
                     log.info("Request message contain validation issues!");
+                }
             }
         } else {
 
             log.info("SOAP message body is empty");
-        }
-
-        if (inMessageContext.getEnvelope().getBody().getFirstElement() != null) {
-
         }
 
 

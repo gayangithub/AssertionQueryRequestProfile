@@ -18,22 +18,53 @@
 
 package org.wso2.carbon.identity.saml.profile.query.handler;
 
+import org.wso2.carbon.context.CarbonContext;
+import org.wso2.carbon.identity.saml.profile.query.internal.SAMLQueryServiceComponent;
+import org.wso2.carbon.user.api.UserStoreException;
+import org.wso2.carbon.user.api.UserStoreManager;
+
 import java.util.Map;
-import java.util.Set;
 
 /**
- * Created by Gayan on 6/12/2016.
+ * Implementation class of SAMLAttributeFinder
  */
 public class UserStoreAttributeFinder implements SAMLAttributeFinder {
     public void init() {
 
     }
 
+    /**
+     * @param userName
+     * @return
+     */
     public Map<String, String> getAttributes(String userName) {
         return null;
     }
 
-    public Map<String, String> getAttributes(String userName, Set<String> attributes) {
+
+    /**
+     * @param userName
+     * @param attributes
+     * @return Map of attribute name value pairs
+     */
+    public Map<String, String> getAttributes(String userName, String[] attributes) {
+
+        //establish realmservice to access user store
+        try {
+            UserStoreManager userStoreManager = SAMLQueryServiceComponent.getRealmservice().
+                    getTenantUserRealm(CarbonContext.getThreadLocalCarbonContext().getTenantId()).
+                    getUserStoreManager();
+            //if not define filtering of user attributes
+            if (attributes == null || attributes.length == 0) {
+                attributes = SAMLQueryServiceComponent.getRealmservice().
+                        getTenantUserRealm(CarbonContext.getThreadLocalCarbonContext().getTenantId()).
+                        getClaimManager().getAllClaimUris();
+            }
+            return userStoreManager.getUserClaimValues(userName, attributes, null);
+        } catch (UserStoreException e) {
+            e.printStackTrace();
+        }
+
         return null;
     }
 }

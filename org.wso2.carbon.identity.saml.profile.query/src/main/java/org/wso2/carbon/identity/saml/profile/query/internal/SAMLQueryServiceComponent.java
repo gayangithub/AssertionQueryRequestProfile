@@ -18,7 +18,8 @@
 
 package org.wso2.carbon.identity.saml.profile.query.internal;
 
-import org.apache.commons.logging.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.user.core.service.RealmService;
 
@@ -35,17 +36,36 @@ public class SAMLQueryServiceComponent {
 
     private static RealmService realmservice = null;
 
+    /**
+     * Get created realm service
+     *
+     * @return RealmService
+     */
+    public static RealmService getRealmservice() {
+
+        return realmservice;
+    }
+
+    /**
+     * bundle activate method
+     *
+     * @param ctxt
+     */
     protected void activate(ComponentContext ctxt) {
 
         System.out.println("Component is activated");
-        log.info("SAMLQueryServiceComponent  : Bundle activated********************************");
+        log.info("SAMLQueryServiceComponent  : Bundle activated");
 
     }
 
+    /**
+     * bundle deactivae method
+     *
+     * @param ctxt
+     */
     protected void deactivate(ComponentContext ctxt) {
 
     }
-
 
     /**
      * sets realm service
@@ -69,9 +89,5 @@ public class SAMLQueryServiceComponent {
             log.debug("DefaultUserRealm unset in to bundle");
         }
         this.realmservice = null;
-    }
-
-    public static RealmService getRealmservice() {
-        return realmservice;
     }
 }

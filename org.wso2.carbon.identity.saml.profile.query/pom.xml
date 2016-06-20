@@ -16,14 +16,15 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.wso2.carbon.identity</groupId>
-  <artifactId>org.wso2.carbon.identity.saml.profile.query</artifactId>
-  <version>1.0.0</version>
- <packaging>bundle</packaging>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.wso2.carbon.identity</groupId>
+    <artifactId>org.wso2.carbon.identity.saml.profile.query</artifactId>
+    <version>1.0.0</version>
+    <packaging>bundle</packaging>
 
-      <dependencies>
+    <dependencies>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.utils</artifactId>
@@ -35,16 +36,21 @@
             <version>5.0.7</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.axis2.wso2</groupId>
+            <artifactId>axis2</artifactId>
+            <version>1.6.1.wso2v11</version>
+        </dependency>
+        <dependency>
             <groupId>org.wso2.carbon.identity</groupId>
             <artifactId>org.wso2.carbon.identity.core</artifactId>
             <version>5.0.7</version>
         </dependency>
-          <dependency>
-              <groupId>org.wso2.carbon.identity</groupId>
-              <artifactId>org.wso2.carbon.identity.sso.saml</artifactId>
-              <version>5.0.7</version>
-          </dependency>
-                <dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.identity</groupId>
+            <artifactId>org.wso2.carbon.identity.sso.saml</artifactId>
+            <version>5.0.7</version>
+        </dependency>
+        <dependency>
             <groupId>opensaml.wso2</groupId>
             <artifactId>opensaml2</artifactId>
             <version>2.4.1.wso2v1</version>
@@ -52,7 +58,7 @@
     </dependencies>
 
 
-            <build>
+    <build>
         <plugins>
 
             <plugin>

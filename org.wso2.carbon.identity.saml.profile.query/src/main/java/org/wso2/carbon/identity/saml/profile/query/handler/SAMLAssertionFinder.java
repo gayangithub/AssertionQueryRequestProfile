@@ -18,14 +18,14 @@
 
 package org.wso2.carbon.identity.saml.profile.query.handler;
 
-import org.opensaml.SAMLAssertion;
+import org.opensaml.saml2.core.Assertion;
 
 /**
- * Created by Gayan on 6/12/2016.
+ * Interface class for SAML assertion finding
  */
 public interface SAMLAssertionFinder {
 
     public void init();
 
-    public SAMLAssertion[] find(String id);
+    public Assertion[] find(String id);
 }

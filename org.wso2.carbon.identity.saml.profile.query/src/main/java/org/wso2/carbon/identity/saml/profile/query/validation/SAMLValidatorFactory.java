@@ -18,12 +18,12 @@
 
 package org.wso2.carbon.identity.saml.profile.query.validation;
 
-import org.opensaml.SAMLAttributeQuery;
 import org.opensaml.SAMLAuthenticationQuery;
 import org.opensaml.SAMLAuthorizationDecisionQuery;
-import org.opensaml.SAMLSubjectQuery;
 import org.opensaml.saml2.core.AssertionIDRequest;
 import org.opensaml.saml2.core.RequestAbstractType;
+import org.opensaml.saml2.core.impl.AttributeQueryImpl;
+import org.opensaml.saml2.core.impl.SubjectQueryImpl;
 
 /**
  * Created by Gayan on 6/12/2016.
@@ -38,12 +38,12 @@ public class SAMLValidatorFactory {
 
             samlQueryValidator = new SAMLIDRequestValidator();
 
-         } else if (request instanceof SAMLSubjectQuery) {
+        } else if (request instanceof SubjectQueryImpl) {
 
             samlQueryValidator = new SAMLSubjectQueryValidator();
 
 
-        } else if (request instanceof SAMLAttributeQuery) {
+        } else if (request instanceof AttributeQueryImpl) {
 
             samlQueryValidator = new SAMLAttributeQueryValidator();
 
@@ -51,7 +51,7 @@ public class SAMLValidatorFactory {
         } else if (request instanceof SAMLAuthenticationQuery) {
 
             samlQueryValidator = new SAMLAuthQueryValidator();
-            ;
+
 
         } else if (request instanceof SAMLAuthorizationDecisionQuery) {
 

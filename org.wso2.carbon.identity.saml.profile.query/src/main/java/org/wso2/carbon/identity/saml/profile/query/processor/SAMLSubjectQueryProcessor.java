@@ -18,53 +18,87 @@
 
 package org.wso2.carbon.identity.saml.profile.query.processor;
 
-import org.apache.ws.security.saml.SAMLIssuer;
-import org.opensaml.SAMLAssertion;
-import org.opensaml.saml2.core.Issuer;
-import org.opensaml.saml2.core.RequestAbstractType;
-import org.opensaml.saml2.core.Subject;
-import org.opensaml.saml2.core.SubjectQuery;
-import org.pdfbox.pdmodel.graphics.predictor.Sub;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.opensaml.saml2.core.*;
+import org.wso2.carbon.identity.base.IdentityException;
+import org.wso2.carbon.identity.core.model.SAMLSSOServiceProviderDO;
+import org.wso2.carbon.identity.saml.profile.query.ResponseBuilder;
 import org.wso2.carbon.identity.saml.profile.query.handler.SAMLAttributeFinder;
 import org.wso2.carbon.identity.saml.profile.query.handler.UserStoreAttributeFinder;
+import org.wso2.carbon.identity.saml.profile.query.util.SAMLQueryRequestUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-/**
- * Created by Gayan on 6/12/2016.
- */
+
 public class SAMLSubjectQueryProcessor implements SAMLQueryProcessor {
 
-    public SAMLAssertion[] process(RequestAbstractType request) {
+    final static Log log = LogFactory.getLog(SAMLSubjectQueryProcessor.class);
+
+    /**
+     * method to generate response object according to subject
+     *
+     * @param request
+     * @return Response container of one or more assertions
+     */
+    public Response process(RequestAbstractType request) {
 
         SubjectQuery query = (SubjectQuery) request;
-
         String issuer = getIssuer(query.getIssuer());
-
         String userName = getUserName(query.getSubject());
-
         Object issuerConfig = getIssuerConfig(issuer);
+        Map<String, String> attributes = getUserAttributes(userName, null, issuerConfig);
+        Assertion assertion = build(userName, issuerConfig, attributes);
+        Assertion[] assertions = {assertion};
+        Response response = null;
 
-        Map<String, String> attributes = getUserAttributes(userName, null);
+        try {
+            //building response object
+            response = ResponseBuilder.build(assertions, (SAMLSSOServiceProviderDO) issuerConfig, userName);
+            log.info("SAMLSubjectQueryProcessor : response generated");
+        } catch (IdentityException e) {
+            e.printStackTrace();
+        }
 
-        build(userName, issuerConfig, attributes);
-
-        return new SAMLAssertion[0];
+        return response;
     }
 
+    /**
+     * method to load issuer config
+     *
+     * @param issuer
+     * @return get issuer config object
+     */
     protected Object getIssuerConfig(String issuer) {
 
+        try {
+            return SAMLQueryRequestUtil.getServiceProviderConfig(issuer);
+        } catch (IdentityException e) {
+            e.printStackTrace();
+        }
         return new Object();
     }
 
-
-    protected Map<String, String> getUserAttributes(String userName, Set<String> attributes) {
+    /**
+     * method to load user attributes as map with filtering(AttributeQuery)
+     *
+     * @param userName
+     * @param attributes
+     * @param issuerConfig
+     * @return Map
+     */
+    protected Map<String, String> getUserAttributes(String userName, String[] attributes,
+                                                    Object issuerConfig) {
 
         List<SAMLAttributeFinder> finders = getAttributeFinders();
 
         for (SAMLAttributeFinder finder : finders) {
             Map<String, String> attributeMap = finder.getAttributes(userName, attributes);
             if (attributeMap != null && attributeMap.size() > 0) {
+                //filter attributes based on attribute query here
                 return attributeMap;
             }
         }
@@ -72,23 +106,55 @@ public class SAMLSubjectQueryProcessor implements SAMLQueryProcessor {
         return new HashMap<String, String>();
     }
 
-    protected SAMLAssertion build(String userName, Object issuer, Map<String, String> attributes) {
-
-        return new SAMLAssertion();
+    /**
+     * build assertion
+     *
+     * @param userName
+     * @param issuer
+     * @param attributes
+     * @return
+     */
+    protected Assertion build(String userName, Object issuer, Map<String, String> attributes) {
+        Assertion responseAssertion = null;
+        try {
+            responseAssertion = SAMLQueryRequestUtil.buildSAMLAssertion(userName, attributes, (SAMLSSOServiceProviderDO) issuer);
+        } catch (IdentityException e) {
+            e.printStackTrace();
+        }
+        return responseAssertion;
     }
 
+    /**
+     * get issuer value
+     *
+     * @param issuer
+     * @return
+     */
     protected String getIssuer(Issuer issuer) {
 
-        return "";
+        return issuer.getValue();
     }
 
+    /**
+     * get subject value
+     *
+     * @param subject
+     * @return String subject vslue
+     */
     protected String getUserName(Subject subject) {
 
-        return "";
+        return subject.getNameID().getValue();
     }
 
+    /**
+     * method to select attribute finder source
+     *
+     * @return List
+     */
     private List<SAMLAttributeFinder> getAttributeFinders() {
 
-        return new ArrayList<SAMLAttributeFinder>();
+        List<SAMLAttributeFinder> finders = new ArrayList<SAMLAttributeFinder>();
+        finders.add(new UserStoreAttributeFinder());
+        return finders;
     }
 }

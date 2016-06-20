@@ -19,10 +19,9 @@
 package org.wso2.carbon.identity.saml.profile.query.handler;
 
 import java.util.Map;
-import java.util.Set;
 
 /**
- * Created by Gayan on 6/12/2016.
+ * Interface for selecting assertion hosting source methods
  */
 public interface SAMLAttributeFinder {
 
@@ -30,6 +29,6 @@ public interface SAMLAttributeFinder {
 
     public Map<String, String> getAttributes(String userName);
 
-    public Map<String, String> getAttributes(String userName, Set<String> attributes);
+    public Map<String, String> getAttributes(String userName, String[] attributes);
 
 }

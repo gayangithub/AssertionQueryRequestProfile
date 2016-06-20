@@ -21,8 +21,9 @@ package org.wso2.carbon.identity.saml.profile.query.validation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.opensaml.SAMLSubject;
-import org.opensaml.SAMLSubjectQuery;
 import org.opensaml.saml2.core.RequestAbstractType;
+import org.opensaml.saml2.core.Subject;
+import org.opensaml.saml2.core.impl.SubjectQueryImpl;
 
 
 /**
@@ -31,22 +32,26 @@ import org.opensaml.saml2.core.RequestAbstractType;
 public class SAMLSubjectQueryValidator extends AbstractSAMLQueryValidator {
 
     private final static Log log = LogFactory.getLog(SAMLSubjectQueryValidator.class);
-   SAMLSubject subject = null;
+    SAMLSubject subject = null;
 
     @Override
     public boolean validate(RequestAbstractType request) {
-        boolean isSubjectValid = this.validateSubject((SAMLSubjectQuery) request);
+        boolean isSuperValidated = super.validate(request);
+        if (!isSuperValidated) {
+            return false;
+        }
+        boolean isSubjectValid = this.validateSubject((SubjectQueryImpl) request);
 
-        return super.validate(request) && isSubjectValid;
+        return isSubjectValid;
     }
 
-    protected boolean validateSubject(SAMLSubjectQuery request) {
-        subject = request.getSubject();
+    protected boolean validateSubject(SubjectQueryImpl subjectQuery) {
+        Subject subject = subjectQuery.getSubject();
         boolean isValidsubject = false;
         // Validating SubjectID format
-        if (subject != null && subject.getNameIdentifier() != null &&
-                subject.getNameIdentifier().getFormat() != null && super.getSsoIdpConfig().getNameIDFormat() != null &&
-                subject.getNameIdentifier().getFormat().equals(super.getSsoIdpConfig().getNameIDFormat())) {
+        if (subject != null && subject.getNameID() != null &&
+                subject.getNameID().getFormat() != null && super.getSsoIdpConfig().getNameIDFormat() != null &&
+                subject.getNameID().getFormat().equals(super.getSsoIdpConfig().getNameIDFormat())) {
             log.info("Request subject is valid");
             isValidsubject = true;
         }

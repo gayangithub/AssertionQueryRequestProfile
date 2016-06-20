@@ -18,10 +18,53 @@
 
 package org.wso2.carbon.identity.saml.profile.query.processor;
 
-/**
- * Created by Gayan on 6/12/2016.
- */
+import org.opensaml.saml1.core.AuthorizationDecisionQuery;
+import org.opensaml.saml2.core.AssertionIDRequest;
+import org.opensaml.saml2.core.RequestAbstractType;
+import org.opensaml.saml2.core.impl.AttributeQueryImpl;
+import org.opensaml.saml2.core.impl.AuthnQueryImpl;
+import org.opensaml.saml2.core.impl.SubjectQueryImpl;
+
+
 public class SAMLProcessorFactory {
+    /**
+     * factory method to select relevant processor
+     *
+     * @param request
+     * @return SAMLQueryProcessor
+     */
+    public static SAMLQueryProcessor getProcessor(RequestAbstractType request) {
+
+        SAMLQueryProcessor samlQueryProcessor = null;
+
+        if (request instanceof AssertionIDRequest) {
+
+            samlQueryProcessor = new SAMLIDRequestProcessor();
+
+        } else if (request instanceof SubjectQueryImpl) {
+
+            samlQueryProcessor = new SAMLSubjectQueryProcessor();
+
+
+        } else if (request instanceof AttributeQueryImpl) {
+
+            samlQueryProcessor = new SAMLAttributeQueryProcessor();
+
+
+        } else if (request instanceof AuthnQueryImpl) {
+
+            samlQueryProcessor = new SAMLAuthnQueryProcessor();
+
+
+        } else if (request instanceof AuthorizationDecisionQuery) {
+        /* deprecated after SAML 2.0 */
+            samlQueryProcessor = new SAMLAuthzDecisionProcessor();
+
+        }
+
+        return samlQueryProcessor;
+
+    }
 
 
 }

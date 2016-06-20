@@ -17,8 +17,6 @@
  */
 package org.wso2.carbon.identity.saml.profile.query.validation;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.opensaml.saml2.core.RequestAbstractType;
 
 /**
@@ -32,7 +30,6 @@ public interface SAMLQueryValidator {
      * @return
      */
     public boolean validate(RequestAbstractType request);
-
 
 
 }

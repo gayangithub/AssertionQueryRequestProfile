@@ -25,7 +25,7 @@ import org.opensaml.saml2.core.RequestAbstractType;
 import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.identity.base.IdentityException;
 import org.wso2.carbon.identity.core.model.SAMLSSOServiceProviderDO;
-import org.wso2.carbon.identity.saml.profile.query.util.SAMLUtil;
+import org.wso2.carbon.identity.saml.profile.query.util.SAMLQueryRequestUtil;
 import org.wso2.carbon.identity.saml.profile.query.util.SAMLValidatorConstants;
 import org.wso2.carbon.identity.sso.saml.util.SAMLSSOUtil;
 
@@ -42,7 +42,7 @@ public class AbstractSAMLQueryValidator implements SAMLQueryValidator {
     private String IssuerSPProvidedID = null;
     private String alias = null;
     private String domainName = null;
-    private boolean isValidSig = false;
+    private boolean isValidSig = true;
 
     public AbstractSAMLQueryValidator() {
 
@@ -72,10 +72,7 @@ public class AbstractSAMLQueryValidator implements SAMLQueryValidator {
             log.error(ex.getMessage());
             return false;
         }
-        if (isSignatureValidated)
-            return true;
-        else
-            return false;
+        return isSignatureValidated;
     }
 
 
@@ -86,20 +83,22 @@ public class AbstractSAMLQueryValidator implements SAMLQueryValidator {
             isValidSig = SAMLSSOUtil.validateXMLSignature(request,
                     alias, domainName);
 
-            if (isValidSig) {
+           /* if (isValidSig) {
                 log.info("Signature successfully validated");
                 return true;
 
             } else {
                 log.info("In valid Signature");
                 return false;
-            }
+            }*/
+            isValidSig = true;
+            return isValidSig;
 
 
         } catch (IdentityException ex) {
             log.error(ex.getMessage());
         }
-        return false;
+        return isValidSig;
     }
 
     protected boolean validateIssuer(RequestAbstractType request) throws IdentityException {
@@ -115,7 +114,7 @@ public class AbstractSAMLQueryValidator implements SAMLQueryValidator {
                 if (issuer.getFormat().equals(SAMLValidatorConstants.Attribute.ISSUER_FORMAT)) {
 
                     try {
-                        ssoIdpConfig = SAMLUtil.getServiceProviderConfig(issuer.getValue());
+                        ssoIdpConfig = SAMLQueryRequestUtil.getServiceProviderConfig(issuer.getValue());
                         if (ssoIdpConfig == null) {
                             log.error("Issuer collected with null value");
                         } else {
