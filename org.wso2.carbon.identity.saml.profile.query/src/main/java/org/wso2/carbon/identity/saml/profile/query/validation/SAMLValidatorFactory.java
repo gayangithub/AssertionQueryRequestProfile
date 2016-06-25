@@ -38,12 +38,7 @@ public class SAMLValidatorFactory {
 
             samlQueryValidator = new SAMLIDRequestValidator();
 
-        } else if (request instanceof SubjectQueryImpl) {
-
-            samlQueryValidator = new SAMLSubjectQueryValidator();
-
-
-        } else if (request instanceof AttributeQueryImpl) {
+        }  else if (request instanceof AttributeQueryImpl) {
 
             samlQueryValidator = new SAMLAttributeQueryValidator();
 
@@ -56,6 +51,11 @@ public class SAMLValidatorFactory {
         } else if (request instanceof SAMLAuthorizationDecisionQuery) {
 
             samlQueryValidator = new SAMLAuthzDecisionValidator();
+
+        } else if (request instanceof SubjectQueryImpl) {
+
+            samlQueryValidator = new SAMLSubjectQueryValidator();
+
 
         }
 

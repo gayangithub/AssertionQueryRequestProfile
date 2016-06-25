@@ -24,6 +24,7 @@ import org.opensaml.saml2.core.*;
 import org.wso2.carbon.identity.base.IdentityException;
 import org.wso2.carbon.identity.core.model.SAMLSSOServiceProviderDO;
 import org.wso2.carbon.identity.saml.profile.query.ResponseBuilder;
+import org.wso2.carbon.identity.saml.profile.query.dto.InvalidItemDTO;
 import org.wso2.carbon.identity.saml.profile.query.handler.SAMLAttributeFinder;
 import org.wso2.carbon.identity.saml.profile.query.handler.UserStoreAttributeFinder;
 import org.wso2.carbon.identity.saml.profile.query.util.SAMLQueryRequestUtil;
@@ -37,6 +38,7 @@ import java.util.Map;
 public class SAMLSubjectQueryProcessor implements SAMLQueryProcessor {
 
     final static Log log = LogFactory.getLog(SAMLSubjectQueryProcessor.class);
+
 
     /**
      * method to generate response object according to subject

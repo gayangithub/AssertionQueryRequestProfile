@@ -20,9 +20,12 @@ package org.wso2.carbon.identity.saml.profile.query.handler;
 
 import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.identity.saml.profile.query.internal.SAMLQueryServiceComponent;
+import org.wso2.carbon.user.api.ClaimMapping;
 import org.wso2.carbon.user.api.UserStoreException;
 import org.wso2.carbon.user.api.UserStoreManager;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -56,10 +59,21 @@ public class UserStoreAttributeFinder implements SAMLAttributeFinder {
                     getUserStoreManager();
             //if not define filtering of user attributes
             if (attributes == null || attributes.length == 0) {
+                /*
                 attributes = SAMLQueryServiceComponent.getRealmservice().
                         getTenantUserRealm(CarbonContext.getThreadLocalCarbonContext().getTenantId()).
                         getClaimManager().getAllClaimUris();
+                        */
+                List<String> list = new ArrayList<String>();
+                ClaimMapping[] claimMappings = SAMLQueryServiceComponent.getRealmservice().getTenantUserRealm(CarbonContext.getThreadLocalCarbonContext().getTenantId()).getClaimManager().getAllClaimMappings("http://wso2.org/claims");
+                for(ClaimMapping claimMapping : claimMappings){
+                    if(claimMapping.getClaim() != null && claimMapping.getClaim().getClaimUri() != null) {
+                        list.add(claimMapping.getClaim().getClaimUri());
+                    }
+                }
+                attributes =  list.toArray(new String[list.size()]);
             }
+
             return userStoreManager.getUserClaimValues(userName, attributes, null);
         } catch (UserStoreException e) {
             e.printStackTrace();

@@ -25,29 +25,35 @@ public class SAMLValidatorConstants {
 
     public static class ValidationType {
         public static final String VAL_DECODE = "Decoding the Request";
-        public static final String VAL_UNMARSHAL = "Unmarshalling the Request";
-        public static final String VAL_VERSION = "Validating the Version";
-        public static final String VAL_ISSUER = "Checking for Issuer";
+
+
         public static final String VAL_ISSUER_FORMAT = "Validating Issuer Format";
         public static final String VAL_IDP_CONFIGS = "Loading IdP Configurations";
         public static final String VAL_CONSUM_URL = "Validating Assertion Consumer URL";
         public static final String VAL_SUB_NAMEID_FMT = "Validating Suject NameID Format";
         public static final String VAL_SUB_CONF_MTHD = "Validating Suject Confirmation Method";
         public static final String VAL_DESTINATION = "Validating Destination";
-        public static final String VAL_SIGNATURE = "Validating Signature";
+
         public static final String VAL_AUTHN_REQUEST = "Validating for AuthnRequest";
         public static final String VAL_WRONG_BINDING = "Invalid Binding for AuthnRequest";
+        //validation
+        public static final String VAL_MESSAGE_BODY = "Validation Message Body";
+        public static final String VAL_UNMARSHAL = "Unmarshalling the Request";
+        public static final String VAL_MESSAGE_TYPE = "Validation Message Type";
+        public static final String VAL_VERSION = "Validating the Version";
+        public static final String VAL_ISSUER = "Checking for Issuer";
+        public static final String VAL_SIGNATURE = "Validating Signature";
     }
 
     public static class ValidationMessage {
         public static final String VAL_DECODE_SUCCESS = "Request decoded succesfully.";
         public static final String VAL_DECODE_FAIL = " Unable to decode the request.";
         public static final String VAL_UNMARSHAL_SUCCESS = "Request unmarshalled succesfully.";
-        public static final String VAL_UNMARSHAL_FAIL = " Unable to unmarshal the request.";
+
         public static final String VAL_VERSION_SUCCESS = "SAML version is valid.";
-        public static final String VAL_VERSION_FAIL = "Invalied SAML version %s, expected version is 2.0.";
+
         public static final String VAL_ISSUER_SUCCESS = "Issuer/ProviderName is available in the AuthnRequest.";
-        public static final String VAL_ISSUER_FAIL = "Issuer/ProviderName is not available in the AuthnRequest.";
+
         public static final String VAL_ISSUER_FMT_SUCCESS = "Issuer Format attribute value is valid.";
         public static final String VAL_ISSUER_FMT_FAIL = "Issuer Format attribute value is invalid.";
         public static final String VAL_IDP_CONFIGS_SUCCESS = "A Service Provider with the Issuer '%s' is registered.";
@@ -62,16 +68,35 @@ public class SAMLValidatorConstants {
         public static final String VAL_DESTINATION_FAIL = "Invalid destination value '%s', expected value '%s'.";
         public static final String VAL_SIGNATURE_SUCCESS = "Signature validation for AuthnRequest is succeeded.";
         public static final String VAL_SIGNATURE_FAIL = "Signature validation for Authentication Request failed.";
-        public static final String VAL_SIGNATURE_ERROR = "Signature validation for Authentication Request failed with error : %s";
+
         public static final String VAL_AUTHN_REQUEST_FAIL = "Request is not an AuthnRequest";
         public static final String VAL_EXTRACT_SAML_REQ_FAIL = "Extracting SAML request failed.";
         public static final String VAL_DECODE_QUERY_STRING_FAIL = "Decoding query string failed.";
         public static final String VAL_WRONG_BINDING_MSG = "Request can unmarshall using 'Redirect Binding', please check Binding in Service Provider side.";
+        //validation messages
+        public static final String VAL_MESSAGE_BODY_ERROR = "Message Body is Empty";
+        public static final String VAL_UNMARSHAL_FAIL = " Unable to unmarshal the request";
+        public static final String VAL_MESSAGE_TYPE_ERROR = "Invalid Standart Request Message Type";
+        public static final String VAL_VERSION_ERROR = "Invalied SAML version, expected version is 2.0";
+        public static final String VAL_ISSUER_ERROR = "Issuer is Not Validated";
+        public static final String VAL_SIGNATURE_ERROR = "Signature Validation for Request Failed";
+
     }
 
-    public static class ErrorMessage {
-        public static final String ERROR_INCOMPLETE_DATA = "Provided data(Issuer/User Name) is incomplete.";
-        public static final String ERROR_CONFIG_NOT_AVAIL = "A Service Provider with the Issuer '%s' is not registered.";
-        public static final String ERROR_BUILD_FAIL = "Response generation failed with error : '%s'.";
+
+
+    public static class ServiceMessages {
+        public static final String SERVICE_STARTED  = "Assertion Query/Request Profile Started";
+        public static final String SIGNATURE_VALIDATION_FAILED = "Internal Error in Signature Validation";
+        public static final String ISSUER_VALIDATION_FAILED = "Internal Error in Issuer Validation";
+        public static final String NULL_ISSUER = "Issuer Collected With Null Value";
+        public static final String NO_ISSUER_PRESENTED = "Issuer Element Not Presented";
+        public static final String SUCCESS_ISSUER = "Issuer Collected Successfully With : ";
+        public static final String SERVER_ERROR_PROCESSING_ISSUER_SIG_VERSION = "Internal Error in Processing Issuer, Signature and Version";
+        public static final String NON_COMPAT_SAML_VERSION = "Request contain non SAML 2.0";
+        public static final String COMPLETE_VALIDATION = "Request Message Validated";
+        public static final String SOAP_RESPONSE_CREATED = "SOAP Response Created";
+        public static final String SOAP_RESPONSE_CREATION_FAILED = "Internal Error in Creating SOAP Response ";
+        public static final String MARSHAL_ERROR = "Unable to Marshal Response ";
     }
 }

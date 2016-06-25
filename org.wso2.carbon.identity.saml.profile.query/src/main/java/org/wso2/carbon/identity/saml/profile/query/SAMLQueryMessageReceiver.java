@@ -29,13 +29,18 @@ import org.apache.axis2.transport.TransportUtils;
 import org.opensaml.saml2.core.RequestAbstractType;
 import org.opensaml.saml2.core.Response;
 import org.wso2.carbon.identity.base.IdentityException;
+import org.wso2.carbon.identity.saml.profile.query.dto.InvalidItemDTO;
 import org.wso2.carbon.identity.saml.profile.query.processor.SAMLProcessorFactory;
 import org.wso2.carbon.identity.saml.profile.query.processor.SAMLQueryProcessor;
 import org.wso2.carbon.identity.saml.profile.query.util.SAMLQueryRequestUtil;
+import org.wso2.carbon.identity.saml.profile.query.util.SAMLValidatorConstants;
 import org.wso2.carbon.identity.saml.profile.query.validation.SAMLQueryValidator;
 import org.wso2.carbon.identity.saml.profile.query.validation.SAMLValidatorFactory;
 
+
 import javax.xml.stream.XMLStreamException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Axis2 Message receiver for SAML Query
@@ -43,86 +48,105 @@ import javax.xml.stream.XMLStreamException;
 public class SAMLQueryMessageReceiver extends AbstractInOutMessageReceiver {
     OMElement queryOM = null;
     boolean isValidMessage = false;
+    boolean isResponseCreated = false;
+    List<InvalidItemDTO> invalidItems = new ArrayList<InvalidItemDTO>();
 
 
     @Override
     public void invokeBusinessLogic(MessageContext inMessageContext, MessageContext outMessageContext) throws AxisFault {
 
+        log.info(SAMLValidatorConstants.ServiceMessages.SERVICE_STARTED);
         if (inMessageContext.getEnvelope().getBody() != null) {
+            //process if message body not null
             queryOM = inMessageContext.getEnvelope().getBody().getFirstElement();
 
-            System.out.println("SAMLQueryMessageReceiver Executed!!!!!!  ");
-            System.out.println(queryOM.toString());
-            RequestAbstractType request = ((RequestAbstractType) SAMLQueryRequestUtil.unmarshall(queryOM.toString()));
-            if (request == null) {
-                log.error("No way to proceed .request is empty");
-                return;
-            } else {
-
+             RequestAbstractType request = ((RequestAbstractType) SAMLQueryRequestUtil.unmarshall(invalidItems,queryOM.toString()));
+            if (request != null) {
+            //process only if message transformed successfully.
                 SAMLQueryValidator validator = SAMLValidatorFactory.getValidator(request);
-                isValidMessage = validator.validate(request);
+                //validate request message
+                isValidMessage = validator.validate(invalidItems,request);
                 if (isValidMessage) {
-                    log.info("request message is validated completely");
+                    log.info(SAMLValidatorConstants.ServiceMessages.COMPLETE_VALIDATION);
 
                     //Process Request message
                     SAMLQueryProcessor processor = SAMLProcessorFactory.getProcessor(request);
                     Response response = processor.process(request);
+
                     try {
-                        String nonEncodedResponse = SAMLQueryRequestUtil.marshall((response));
-
-
-                        /////////////
-//                        SOAPEnvelope env1 = SAMLQueryRequestUtil.createSOAPEnvelope(inMessageContext.getEnvelope().
-//                                getNamespace().getNamespaceURI());
+                        String stringResponse = SAMLQueryRequestUtil.marshall((response));
                         OMElement myOMElement = null;
+
                         try {
-                            myOMElement = AXIOMUtil.stringToOM(nonEncodedResponse);
+                            myOMElement = AXIOMUtil.stringToOM(stringResponse);
+                            if(myOMElement != null) {
+                                SOAPEnvelope soapEnvelope = TransportUtils.createSOAPEnvelope(myOMElement);
+                                outMessageContext.setEnvelope(soapEnvelope);
+                                isResponseCreated = true;
+                                log.info(SAMLValidatorConstants.ServiceMessages.SOAP_RESPONSE_CREATED);
+                            }
                         } catch (XMLStreamException e) {
-                            e.printStackTrace();
+                            log.error(SAMLValidatorConstants.ServiceMessages.SOAP_RESPONSE_CREATION_FAILED);
                         }
-                        SOAPEnvelope soapEnvelope = TransportUtils.createSOAPEnvelope(myOMElement);
 
 
-                        outMessageContext.setEnvelope(soapEnvelope);
-
-
-                        ///////////
-
-                        log.info("Response created....... :   " + nonEncodedResponse);
 
                     } catch (IdentityException e) {
-                        e.printStackTrace();
+                        log.error(SAMLValidatorConstants.ServiceMessages.MARSHAL_ERROR);
                     }
 
 
                 } else {
+                    //request message contain validation issues
                     log.info("Request message contain validation issues!");
                 }
-            }
-        } else {
 
-            log.info("SOAP message body is empty");
+            }
+            else {
+                invalidItems.add(new InvalidItemDTO(SAMLValidatorConstants.ValidationType.VAL_MESSAGE_TYPE,
+                        SAMLValidatorConstants.ValidationMessage.VAL_MESSAGE_TYPE_ERROR));
+                log.error(SAMLValidatorConstants.ValidationMessage.VAL_MESSAGE_TYPE_ERROR);
+            }
+
+        } else {
+            invalidItems.add(new InvalidItemDTO(SAMLValidatorConstants.ValidationType.VAL_MESSAGE_BODY,
+                    SAMLValidatorConstants.ValidationMessage.VAL_MESSAGE_BODY_ERROR));
+            log.error(SAMLValidatorConstants.ValidationMessage.VAL_MESSAGE_BODY_ERROR);
+        }
+
+    if(invalidItems != null && invalidItems.size() > 0){
+        //create error response message
+        try {
+            Response errorResponse = ResponseBuilder.build(invalidItems);
+            try {
+                String stringErrorResponse = SAMLQueryRequestUtil.marshall((errorResponse));
+                OMElement errorOMElement = null;
+
+                try {
+                    errorOMElement = AXIOMUtil.stringToOM(stringErrorResponse);
+                    if(errorOMElement != null) {
+                        SOAPEnvelope soapEnvelope = TransportUtils.createSOAPEnvelope(errorOMElement);
+                        invalidItems.clear();
+                        outMessageContext.setEnvelope(soapEnvelope);
+                        log.info(SAMLValidatorConstants.ServiceMessages.SOAP_RESPONSE_CREATED);
+                    }
+                } catch (XMLStreamException e) {
+                    log.error(SAMLValidatorConstants.ServiceMessages.SOAP_RESPONSE_CREATION_FAILED);
+                }
+
+
+
+            } catch (IdentityException e) {
+                log.error(SAMLValidatorConstants.ServiceMessages.MARSHAL_ERROR);
+            }
+
+
+        } catch (IdentityException e) {
+            e.printStackTrace();
         }
 
 
-//		try {
-//			Claim[] claims = SAMLQueryServiceComponent.getRealmservice().getTenantUserRealm(-1234).
-//                    getUserStoreManager().getUserClaimValues("gayan", "default");
-//		} catch (UserStoreException e) {
-//			e.printStackTrace();
-//		}
-//
-//		System.out.println("User claims =======================");
-
-
-//		request.getIssuer();
-//
-//		request.getSignature();
-//
-//		if (request instanceof AttributeQueryImpl) {
-//			request = (AttributeQueryImpl) request;
-//			request.get
-//		}
+    }
 
     }
 

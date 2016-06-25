@@ -18,14 +18,13 @@
 
 package org.wso2.carbon.identity.saml.profile.query.processor;
 
-import org.opensaml.saml2.core.Assertion;
-import org.opensaml.saml2.core.AttributeQuery;
-import org.opensaml.saml2.core.RequestAbstractType;
-import org.opensaml.saml2.core.Response;
+import org.opensaml.saml2.core.*;
 import org.wso2.carbon.identity.base.IdentityException;
 import org.wso2.carbon.identity.core.model.SAMLSSOServiceProviderDO;
 import org.wso2.carbon.identity.saml.profile.query.ResponseBuilder;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 
@@ -37,9 +36,10 @@ public class SAMLAttributeQueryProcessor extends SAMLSubjectQueryProcessor {
         String issuer = getIssuer(query.getIssuer());
         String userName = getUserName(query.getSubject());
         Object issuerConfig = getIssuerConfig(issuer);
-        //List<Attribute> requestedattributes = query.getAttributes();
+        List<Attribute> requestedattributes = query.getAttributes();
+        String claimAttributes[] = getAttributesAsArray(requestedattributes);
         //pass filtered attribute list below
-        Map<String, String> attributes = getUserAttributes(userName, null, issuerConfig);
+        Map<String, String> attributes = getUserAttributes(userName,claimAttributes, issuerConfig);
         Assertion assertion = build(userName, issuerConfig, attributes);
         Assertion[] assertions = {assertion};
         Response response = null;
@@ -48,11 +48,38 @@ public class SAMLAttributeQueryProcessor extends SAMLSubjectQueryProcessor {
             response = ResponseBuilder.build(assertions, (SAMLSSOServiceProviderDO) issuerConfig, userName);
             log.info("SAMLAttributeQueryProcessor : response generated");
         } catch (IdentityException e) {
-            e.printStackTrace();
+            log.error("error occurred ",e);
         }
 
         return response;
     }
+
+    /**
+     *
+     * @param claimattributes
+     * @return
+     */
+    private String[] getAttributesAsArray(List<Attribute> claimattributes){
+        List<String> list = new ArrayList<String>();
+        String[] claimArray = null;
+
+
+
+        if(claimattributes.size() > 0){
+
+            for(Attribute attribute : claimattributes){
+                if(attribute.getFriendlyName() != null) {
+                    list.add(attribute.getFriendlyName());
+
+                }
+            }
+            claimArray =  list.toArray(new String[list.size()]);
+            return  claimArray;
+        }
+
+     return  claimArray;
+    }
+
 
 
 }

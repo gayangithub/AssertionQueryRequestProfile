@@ -47,6 +47,7 @@ import org.wso2.carbon.context.CarbonContext;
 import org.wso2.carbon.identity.base.IdentityException;
 import org.wso2.carbon.identity.core.model.SAMLSSOServiceProviderDO;
 import org.wso2.carbon.identity.core.persistence.IdentityPersistenceManager;
+import org.wso2.carbon.identity.saml.profile.query.dto.InvalidItemDTO;
 import org.wso2.carbon.identity.sso.saml.SAMLSSOConstants;
 import org.wso2.carbon.identity.sso.saml.SSOServiceProviderConfigManager;
 import org.wso2.carbon.identity.sso.saml.builders.SignKeyDataHolder;
@@ -63,6 +64,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 
@@ -77,7 +79,7 @@ public class SAMLQueryRequestUtil {
      * @param xmlString
      * @return XMLObject
      */
-    public static XMLObject unmarshall(String xmlString) {
+    public static XMLObject unmarshall(List<InvalidItemDTO> invalidItems,String xmlString) {
         InputStream inputStream = null;
         try {
             doBootstrap();
@@ -94,7 +96,9 @@ public class SAMLQueryRequestUtil {
             Unmarshaller unmarshaller = unmarshallerFactory.getUnmarshaller(element);
             return unmarshaller.unmarshall(element);
         } catch (Exception e) {
-            log.error("Error in constructing XML(SAML or XACML) Object from the encoded String", e);
+            invalidItems.add(new InvalidItemDTO(SAMLValidatorConstants.ValidationType.VAL_UNMARSHAL,
+                    SAMLValidatorConstants.ValidationMessage.VAL_UNMARSHAL_FAIL));
+            log.error(SAMLValidatorConstants.ValidationMessage.VAL_UNMARSHAL_FAIL, e);
         }
 
         return null;

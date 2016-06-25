@@ -18,6 +18,9 @@
 package org.wso2.carbon.identity.saml.profile.query.validation;
 
 import org.opensaml.saml2.core.RequestAbstractType;
+import org.wso2.carbon.identity.saml.profile.query.dto.InvalidItemDTO;
+
+import java.util.List;
 
 /**
  * SAML Query validator interface
@@ -29,7 +32,7 @@ public interface SAMLQueryValidator {
      * @param request
      * @return
      */
-    public boolean validate(RequestAbstractType request);
+    public boolean validate(List<InvalidItemDTO> invalidItems, RequestAbstractType request);
 
 
 }

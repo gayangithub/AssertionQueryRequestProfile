@@ -24,20 +24,22 @@ import org.opensaml.SAMLSubject;
 import org.opensaml.saml2.core.RequestAbstractType;
 import org.opensaml.saml2.core.Subject;
 import org.opensaml.saml2.core.impl.SubjectQueryImpl;
+import org.wso2.carbon.identity.saml.profile.query.dto.InvalidItemDTO;
+
+import java.util.List;
 
 
-/**
- *
- */
+
 public class SAMLSubjectQueryValidator extends AbstractSAMLQueryValidator {
 
     private final static Log log = LogFactory.getLog(SAMLSubjectQueryValidator.class);
-    SAMLSubject subject = null;
+
 
     @Override
-    public boolean validate(RequestAbstractType request) {
-        boolean isSuperValidated = super.validate(request);
+    public boolean validate(List<InvalidItemDTO> invalidItems, RequestAbstractType request) {
+        boolean isSuperValidated = super.validate(invalidItems,request);
         if (!isSuperValidated) {
+
             return false;
         }
         boolean isSubjectValid = this.validateSubject((SubjectQueryImpl) request);

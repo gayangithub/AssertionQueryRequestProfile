@@ -41,11 +41,6 @@ public class SAMLProcessorFactory {
 
             samlQueryProcessor = new SAMLIDRequestProcessor();
 
-        } else if (request instanceof SubjectQueryImpl) {
-
-            samlQueryProcessor = new SAMLSubjectQueryProcessor();
-
-
         } else if (request instanceof AttributeQueryImpl) {
 
             samlQueryProcessor = new SAMLAttributeQueryProcessor();
@@ -59,6 +54,10 @@ public class SAMLProcessorFactory {
         } else if (request instanceof AuthorizationDecisionQuery) {
         /* deprecated after SAML 2.0 */
             samlQueryProcessor = new SAMLAuthzDecisionProcessor();
+
+        }else if (request instanceof SubjectQueryImpl) {
+
+        samlQueryProcessor = new SAMLSubjectQueryProcessor();
 
         }
 
